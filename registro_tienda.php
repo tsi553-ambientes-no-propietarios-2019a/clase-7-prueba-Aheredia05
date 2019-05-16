@@ -1,51 +1,48 @@
 <?php
-/*
-Escribir una página PHP que presente un formulario 
-con los campos “usuario” y “contraseña” y un botón que 
-permita iniciar sesión. Al iniciar la sesión se debe 
-redireccionar a la página de inicio.php que mostrará 
-los datos guardados en la sesión y un saludo mostrando 
-el nombre del usuario ingresado. La página de inicio debe 
-tener un link que permita cerrar la sesión del usuario.
-*/
+
+if ($_GET) {
+    if (isset($_GET['error_message'])) {
+        $error_message = $_GET['error_message'];
+    }
+}
 ?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <title>Tienda</title>
+    <title>Registro tienda</title>
 </head>
+
 <body>
+    <center>
+    <div>
+                <h1> <b>Registro de Tienda </b> </h1>
+            <br>
+            <form action='reg_tienda.php' method ='POST'>
+                <div>
+                    Nombre de la tienda: <input type="text" name="nombretienda" placeholder="Nombre de la tienda" required>
+                    <br>
+                    <br>
+                    usuario: <input type="text" name="usuario" placeholder="usuario" required>
+                    <br>
+                    <br>
+                    clave: <input type="password" name="clave" placeholder="clave" required>
+                    <br>
+                    <br>
+                    confirmar clave: <input type="password" name="clave1" placeholder="confirmar clave" required>
+                    <br>
+                    <br>
+                    <button type="submit">Registrar</button>
+                </div>
+            </form>
+        </div>
 
-<form action="php/inicio.php" method ="post">
-<center>
-<h1>Registro tienda</h1>
-<div>
-<label >Nombre de Tienda:</label>
-<input type="text" id = "userId" name="nombre" required="required">
-</div>
-<br>
 
-<div>
-<label >Direccion:      </label>
-<input type="text"  name="Direccion" required="required">
-</div>
-<br>
-<div>
-<label >Usuario:        </label>
-<input type="text" id = "userId" name="nombre" required="required">
-</div>
-<br>
+        <?php if (isset($error_message)) { ?>
+            <div><strong><?php echo $error_message; ?></strong></div>
+        <?php } ?>
+    </center>
 
-<div>
-<label>Password:        </label>
-<input type="password" name="password" required ="required">
-</div>
-<br>
-<button>Registrar</button>
-
-</center>
-</form>
-
-    
 </body>
 </html>

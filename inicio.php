@@ -1,61 +1,80 @@
 <?php
 session_start();
 
-if($_POST){
-    if (isset($_POST['txtuser']) && isset($_POST['txtpass'])) {
-        $username=$_POST['txtuser'];
-        $password=MD5($_POST['txtpass']);
 
-        $conn=new mysqli('localhost','root','','registrot');
-
-        if ($conn->connect_error) {
-            echo 'Error en la conexion '. $conn->connect_error;
-        }
-        $sql="select * from user where username='$username' and passwd='$password'";
-
-        $res=$conn->query($sql);
-
-        if($conn->error){
-            header('Location: index.php?error_message=Ocurrió un error: '.$conn->error);
-            exit;
-        }
-
-        if ($res->num_rows> 0 ) {
-            while ($row=$res->fetch_assoc()) {
-                $_SESSION['user']=[
-                'username'=>$row['username'],
-                'id'=>$row['iduser']];
-            }
-        }else {
-            header('Location: index.php?error_message= Usuario o clave incorrectas!');
-            exit;
-        }
+if ($_GET) {
+    if (isset($_GET['error_message'])) {
+        $error_message = $_GET['error_message'];
     }
 }
 
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Welcome</title>
-</head>
-<body>
+if (isset($_SESSION['user'])) {
+    
+    $nombre = $_SESSION['user'];
+    $conn = mysqli_connect("localhost", "root", "", "pruebab1");
+    $sql = "SELECT nombretienda FROM tienda WHERE usuario='$nombre'";
+    $tab = mysqli_query($conn, $sql);
+        while ($row = mysqli_fetch_array($tab)) {
+            $tienda = $row['nombretienda'];
+            
+    }
+    $sql1 = "SELECT codigo, nombre, tipo, cantidad, precio FROM productos where tienda='$nombre'";
+    $tab2 = mysqli_query($conn, $sql1);
+    ?>
+    <!DOCTYPE html>
+    <html>
 
-<h1>Inicio</h1>
-    <div>
-    <?php echo 'Bienvenido :' .strtoupper($_POST['nombre']);?>
-    <?php echo 'Nombre de la tienda :' .strtoupper($_POST['nomt']);?>
-    </div>
-   
-    <div>
-    <a href="php/home.php">LOGOUT</a>
-    </div>
+    <head>
+        <title>Inicio</title>
+    </head>
 
-   
+    <body>
+        <center>
+            <div>
+                <h1>Bienvenido <?php echo "$nombre"; ?></h1>
+                <h2>Nombre de la Tienda: <?php echo "$tienda"; ?></h2>
+                <h3>Productos de la Tienda</h3>
+                <br>
+            </div>
+            <table class="table table-striped" name="tabla" border="2">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
 
+                <?php while ($row2 = mysqli_fetch_array($tab2)) {
+                    if ($row2) {?>
 
-</body>
-</html>
+                        <tr>
+                            <td><?php echo $row2['codigo']; ?></td>
+                            <td><?php echo $row2['nombre']; ?></td>
+                            <td><?php echo $row2['tipo']; ?></td>
+                            <td><?php echo $row2['cantidad']; ?></td>
+                            <td><?php echo $row2['precio']; ?></td>
+
+                        </tr>
+                    <?php }
+            } ?>
+
+            </table>
+            <?php if (isset($error_message)) { ?>
+                <div><strong><?php echo $error_message; ?></strong></div>
+            <?php } ?>
+
+        </center>
+
+        <a href="nuevo_producto.php">Registar un nuevo Producto</a>
+        <a href="salir.php">Salir</a>
+    </body>
+
+    </html>
+
+<?php
+} else {
+    header('Location: ../index.php');
+}
